@@ -15,10 +15,18 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
   //        int countCloseFlockmates = 0;
   //        // todo: find and apply force only on the closest mates
   //    }
+  // FORMULA: 1 / x
+  //separatingForce = Vector2f::normalized(separatingForce);
+  for (Boid* i : neighborhood) {
+    if (i == boid) { continue; }
+    float dist = Vector2f::Distance(i->getPosition(), boid->getPosition());
+    if (dist == 0) continue;
+    if (dist < desiredMinimalDistance) {
+      separatingForce += (boid->getPosition() - i->getPosition()) / dist;
+    }
+  }
 
-  separatingForce = Vector2f::normalized(separatingForce);
-
-  return separatingForce;
+  return separatingForce * weight;
 }
 
 bool SeparationRule::drawImguiRuleExtra() {

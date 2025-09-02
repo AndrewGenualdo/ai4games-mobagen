@@ -10,6 +10,20 @@ Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, B
   // todo: add here your code code here do make the boid follow the bounded box rule
   // hint: use this->world->engine->window->size() and desiredDistance
 
+    //if (desiredDistance)
+    // if (Vector2f::Distance())
+
+  if (float const distToTop = Vector2f::Distance(boid->getPosition(), Vector2f(boid->getPosition().x, static_cast<float>(this->world->engine->window->size().y)));
+    distToTop < static_cast<float>(desiredDistance)) { force += Vector2f(0, -distToTop / static_cast<float>(desiredDistance) * weight); }
+  if (float const distToBottom = Vector2f::Distance(boid->getPosition(), Vector2f(boid->getPosition().x, 0));
+    distToBottom < static_cast<float>(desiredDistance)) { force += Vector2f(0, distToBottom / static_cast<float>(desiredDistance) * weight); }
+  if (float const distToLeft = Vector2f::Distance(boid->getPosition(), Vector2f(0, boid->getPosition().y));
+    distToLeft < static_cast<float>(desiredDistance)) { force += Vector2f(distToLeft / static_cast<float>(desiredDistance) * weight, 0); }
+  if (float const distToRight = Vector2f::Distance(boid->getPosition(), Vector2f(static_cast<float>(this->world->engine->window->size().x), boid->getPosition().y));
+    distToRight < static_cast<float>(desiredDistance)) { force += Vector2f(-distToRight / static_cast<float>(desiredDistance) * weight, 0); }
+
+
+
   return force;
 }
 

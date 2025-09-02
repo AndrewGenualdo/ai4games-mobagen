@@ -7,6 +7,10 @@ Vector2f AlignmentRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
   // todo: add your code here to align each boid in a neighborhood
   // hint: iterate over the neighborhood
+  for (Boid* i : neighborhood) {
+    if (i == boid) { continue; }
+    averageVelocity += i->getVelocity();
+  }
 
-  return Vector2f::normalized(averageVelocity);
+  return averageVelocity.normalized() * weight;
 }
