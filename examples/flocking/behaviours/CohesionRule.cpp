@@ -12,5 +12,5 @@ Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid
     cohesionForce += i->getPosition();
   }
 
-  return neighborhood.size() == 0 ? Vector2f::zero() : Vector2f::normalized((cohesionForce / neighborhood.size()) - boid->getPosition()) * weight;
+  return neighborhood.size() == 0 ? Vector2f::zero() : ((cohesionForce / neighborhood.size()) - boid->getPosition()).normalized() * weight;
 }
