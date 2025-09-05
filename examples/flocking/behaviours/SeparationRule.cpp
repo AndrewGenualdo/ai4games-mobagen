@@ -22,11 +22,11 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
     float dist = Vector2f::Distance(i->getPosition(), boid->getPosition());
     if (dist == 0) continue;
     if (dist < desiredMinimalDistance) {
-      separatingForce += (boid->getPosition() - i->getPosition()) / dist;
+      separatingForce += ((boid->getPosition() - i->getPosition()).normalized()) / dist;
     }
   }
 
-  return separatingForce * weight;
+  return separatingForce * weight * desiredMinimalDistance;
 }
 
 bool SeparationRule::drawImguiRuleExtra() {
