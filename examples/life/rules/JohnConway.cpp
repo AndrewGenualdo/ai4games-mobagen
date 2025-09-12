@@ -8,7 +8,7 @@ void JohnConway::Step(World& world) {
   for (int y = 0; y < world.SideSize(); y++) {
     for (int x = 0; x < world.SideSize(); x++) {
 
-      int const neighbors = CountNeighbors(world, Point2D(x, y));
+      const int neighbors = CountNeighbors(world, Point2D(x, y));
       const bool wasAlive = world.Get(Point2D(x, y));
       const bool alive = wasAlive ? (neighbors == 2 || neighbors == 3) : neighbors == 3;
       world.SetNext(Point2D(x, y), alive);
