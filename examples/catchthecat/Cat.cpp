@@ -2,10 +2,9 @@
 #include "World.h"
 #include <stdexcept>
 
-Point2D Cat::Move(World* world) {
-  auto rand = Random::Range(0, 5);
-  auto pos = world->getCat();
-  switch (rand) {
+
+Point2D dirToPos(int dir, Point2D const &pos) {
+  switch (dir) {
     case 0:
       return World::NE(pos);
     case 1:
@@ -21,4 +20,23 @@ Point2D Cat::Move(World* world) {
     default:
       throw "random out of range";
   }
+}
+
+Point2D Cat::Move(World* world) {
+  auto pos = world->getCat();
+  int rand = Random::Range(0, 5);
+  Point2D p = dirToPos(rand, pos);
+
+  if (!world->catCanMoveToPosition(p)) {
+    for (int i = 0; i < 5; i++) {
+      rand = (rand + 1) % 6;
+      p = dirToPos(rand, pos);
+      if (world->catCanMoveToPosition(p)) break;
+      if (i == 4) return pos;
+    }
+  }
+
+
+  return p;
+
 }
