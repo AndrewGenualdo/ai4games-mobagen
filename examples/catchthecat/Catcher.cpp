@@ -8,8 +8,86 @@ Point2D Catcher::Move(World* world) {
     auto cat = world->getCat();
     if (cat.x != p.x && cat.y != p.y && !world->getContent(p)) return p;
   }*/
-  Point2D p = Point2D(-side, -side);
   int dir = 0;
+  constexpr int SOUTH = 0;
+  constexpr int EAST = 1;
+  constexpr int NORTH = 2;
+  constexpr int WEST = 3;
+  int southOff = 0;
+  int eastOff = 0;
+  int northOff = 0;
+  int westOff = 0;
+  Point2D dims = Point2D(world->getWorldSideSize(), world->getWorldSideSize());
+  Point2D p = Point2D(-side, -side);
+  Point2D cat = world->getCat() + Point2D(side, side);
+  Point2D catReal = world->getCat();
+  #define filled(x) world->getContent(x) || x == cat
+  /*if (filled(p)) {
+    p = Point2D(side, -side);
+  }
+  if (filled(p))*/
+  if (!filled(Point2D(-side, -side))) return Point2D(-side, -side);
+  if (!filled(Point2D(side, -side))) return Point2D(side, -side);
+  if (!filled(Point2D(side, side))) return Point2D(side, side);
+  if (!filled(Point2D(-side, side))) return Point2D(-side, side);
+
+
+
+  if (cat.y > cat.x && cat.y < dims.y - cat.x) { //left triangle
+    std::cout << "left";
+    bool top = true;
+    p.x = -side;
+    p.y = catReal.y - 1;
+    while (filled(p)) {
+      if (top) p.y += 2;
+      else {
+        p.y -= 2;
+        p.x++;
+      }
+      top = !top;
+    }
+  } else if (cat.y < cat.x && cat.y > dims.y - cat.x) { //right triangle
+    std::cout << "right";
+    bool top = true;
+    p.x = side;
+    p.y = catReal.y - 1;
+    while (filled(p)) {
+      if (top) p.y += 2;
+      else {
+        p.y -= 2;
+        p.x--;
+      }
+      top = !top;
+    }
+  } else if (cat.y < side) {//top triangle
+    std::cout << "top";
+    bool left = true;
+    p.x = catReal.x - 1;
+    p.y = -side;
+    while (filled(p)) {
+      if (left) p.x += 2;
+      else {
+        p.y++;
+        p.x -= 2;
+      }
+      left = !left;
+    }
+  } else { //bottom triangle
+    std::cout << "bottom";
+    bool left = true;
+    p.x = catReal.x - 1;
+    p.y = side;
+    while (filled(p)) {
+      if (left) p.x += 2;
+      else {
+        p.y--;
+        p.x -= 2;
+      }
+      left = !left;
+    }
+  }
+  std::cout << ": " << p.x << " " << p.y << std::endl;
+  /*int dir = 0;
   constexpr int SOUTH = 0;
   int southOff = 0;
   constexpr int EAST = 1;
@@ -19,12 +97,6 @@ Point2D Catcher::Move(World* world) {
   constexpr int WEST = 3;
   int westOff = 0;
   while (world->getContent(p) || world->getCat() == p) {
-    /*p.y ++;
-    if (p.y > side) {
-      p.y = -side;
-      p.x = -p.x;
-      if (p.x < 0) p.x++;
-    }*/
     switch (dir) {
       case SOUTH: {
         //southOff == 0 ? p.y += 2 : p.y++;
@@ -78,6 +150,6 @@ Point2D Catcher::Move(World* world) {
         break;
       }
     }
-  }
+  }*/
   return p;
 }
