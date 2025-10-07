@@ -21,7 +21,8 @@ Point2D Catcher::Move(World* world) {
   Point2D p = Point2D(-side, -side);
   Point2D cat = world->getCat() + Point2D(side, side);
   Point2D catReal = world->getCat();
-  #define filled(x) world->getContent(x) || x == cat
+  #define filled(p) world->getContent(p) || p == cat
+  #define valid(p) p.x >= -side && p.x <= side && p.y >= -side && p.y <= side
   /*if (filled(p)) {
     p = Point2D(side, -side);
   }
@@ -35,10 +36,13 @@ Point2D Catcher::Move(World* world) {
 
   if (cat.y > cat.x && cat.y < dims.y - cat.x) { //left triangle
     std::cout << "left";
-    bool top = true;
+
     p.x = -side;
+    p.y = catReal.y;
+    if (catReal.x <= -side + 1 &&  !filled(p)) return p;
     p.y = catReal.y - 1;
-    while (filled(p)) {
+    bool top = true;
+    while (filled(p) && valid(p)) {
       if (top) p.y += 2;
       else {
         p.y -= 2;
@@ -46,12 +50,16 @@ Point2D Catcher::Move(World* world) {
       }
       top = !top;
     }
+    //if (!valid(p)) p.x = side;
   } else if (cat.y < cat.x && cat.y > dims.y - cat.x) { //right triangle
     std::cout << "right";
-    bool top = true;
+
     p.x = side;
+    p.y = catReal.y;
+    if (catReal.x >= side - 1 && !filled(p)) return p;
     p.y = catReal.y - 1;
-    while (filled(p)) {
+    bool top = true;
+    while (filled(p) && valid(p)) {
       if (top) p.y += 2;
       else {
         p.y -= 2;
@@ -59,12 +67,16 @@ Point2D Catcher::Move(World* world) {
       }
       top = !top;
     }
+    //if (!valid(p)) p.x = -side;
   } else if (cat.y < side) {//top triangle
     std::cout << "top";
-    bool left = true;
-    p.x = catReal.x - 1;
+
     p.y = -side;
-    while (filled(p)) {
+    p.x = catReal.x;
+    if (catReal.y <= -side + 1 && !filled(p)) return p;
+    p.x = catReal.x - 1;
+    bool left = true;
+    while (filled(p) && valid(p)) {
       if (left) p.x += 2;
       else {
         p.y++;
@@ -72,12 +84,16 @@ Point2D Catcher::Move(World* world) {
       }
       left = !left;
     }
+    //if (!valid(p)) p.y = side;
   } else { //bottom triangle
     std::cout << "bottom";
-    bool left = true;
-    p.x = catReal.x - 1;
+
     p.y = side;
-    while (filled(p)) {
+    p.x = catReal.x;
+    if (catReal.y >= side - 1 && !filled(p)) return p;
+    p.x = catReal.x - 1;
+    bool left = true;
+    while (filled(p) && valid(p)) {
       if (left) p.x += 2;
       else {
         p.y--;
@@ -85,6 +101,7 @@ Point2D Catcher::Move(World* world) {
       }
       left = !left;
     }
+    //if (!valid(p)) p.y = -side;
   }
   std::cout << ": " << p.x << " " << p.y << std::endl;
   /*int dir = 0;
