@@ -35,13 +35,13 @@ Point2D Catcher::Move(World* world) {
 
 
   if (cat.y > cat.x && cat.y < dims.y - cat.x) { //left triangle
-    std::cout << "left";
 
     p.x = -side;
     p.y = catReal.y;
     if (catReal.x <= -side + 1 &&  !filled(p)) return p;
     p.y = catReal.y - 1;
     bool top = true;
+    bool fill = false;
     while (filled(p) && valid(p)) {
       if (top) p.y += 2;
       else {
@@ -49,16 +49,28 @@ Point2D Catcher::Move(World* world) {
         p.x++;
       }
       top = !top;
+      if(p.x - 1 > catReal.x) {
+        fill = true;
+        break;
+      }
     }
+    if(fill) {
+      p.x = catReal.x + 1;
+      p.y = catReal.y;
+      while(filled(p)) {
+        p.x--;
+      }
+    }
+    return p;
     //if (!valid(p)) p.x = side;
   } else if (cat.y < cat.x && cat.y > dims.y - cat.x) { //right triangle
-    std::cout << "right";
 
     p.x = side;
     p.y = catReal.y;
     if (catReal.x >= side - 1 && !filled(p)) return p;
     p.y = catReal.y - 1;
     bool top = true;
+    bool fill = false;
     while (filled(p) && valid(p)) {
       if (top) p.y += 2;
       else {
@@ -66,16 +78,28 @@ Point2D Catcher::Move(World* world) {
         p.x--;
       }
       top = !top;
+      if(p.x + 1 < catReal.x) {
+        fill = true;
+        break;
+      }
     }
+    if(fill) {
+      p.x = catReal.x - 1;
+      p.y = catReal.y;
+      while(filled(p)) {
+        p.x++;
+      }
+    }
+    return p;
     //if (!valid(p)) p.x = -side;
   } else if (cat.y < side) {//top triangle
-    std::cout << "top";
 
     p.y = -side;
     p.x = catReal.x;
     if (catReal.y <= -side + 1 && !filled(p)) return p;
     p.x = catReal.x - 1;
     bool left = true;
+    bool fill = false;
     while (filled(p) && valid(p)) {
       if (left) p.x += 2;
       else {
@@ -83,16 +107,28 @@ Point2D Catcher::Move(World* world) {
         p.x -= 2;
       }
       left = !left;
+      if(p.y - 1 > catReal.y) {
+        fill = true;
+        break;
+      }
     }
+    if(fill) {
+      p.x = catReal.x;
+      p.y = catReal.y + 1;
+      while(filled(p)) {
+        p.y--;
+      }
+    }
+    return p;
     //if (!valid(p)) p.y = side;
   } else { //bottom triangle
-    std::cout << "bottom";
 
     p.y = side;
     p.x = catReal.x;
     if (catReal.y >= side - 1 && !filled(p)) return p;
     p.x = catReal.x - 1;
     bool left = true;
+    bool fill = false;
     while (filled(p) && valid(p)) {
       if (left) p.x += 2;
       else {
@@ -100,10 +136,22 @@ Point2D Catcher::Move(World* world) {
         p.x -= 2;
       }
       left = !left;
+      if(p.y + 1 < catReal.y) {
+        fill = true;
+        break;
+      }
     }
+    if(fill) {
+      p.x = catReal.x;
+      p.y = catReal.y - 1;
+      while(filled(p)) {
+        p.y++;
+      }
+    }
+    return p;
     //if (!valid(p)) p.y = -side;
   }
-  std::cout << ": " << p.x << " " << p.y << std::endl;
+  //std::cout << ": " << p.x << " " << p.y << std::endl;
   /*int dir = 0;
   constexpr int SOUTH = 0;
   int southOff = 0;

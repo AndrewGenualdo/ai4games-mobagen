@@ -202,6 +202,7 @@ void World::step() {
     }
   } else {
     auto move = catcher->Move(this);
+    std::cout << move.x << ", " << move.y << std::endl;
     lastMove = move;
     if (catcherCanMoveToPosition(move)) {
       worldState[(move.y + sideSize / 2) * (sideSize) + move.x + sideSize / 2] = true;
