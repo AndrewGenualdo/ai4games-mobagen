@@ -5,8 +5,6 @@
 #include "World.h"
 using namespace std;
 
-
-
 std::vector<Point2D> Agent::generatePath(World* w) {
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
   queue<Point2D> frontier;                   // to store next ones to visit
@@ -35,7 +33,7 @@ std::vector<Point2D> Agent::generatePath(World* w) {
   // if your vector is filled from the border to the cat, the first element is the catcher move, and the last element is the cat move
   return vector<Point2D>();
 }
-Point2D Agent::dirToPos(const int dir, Point2D const& pos)  {
+Point2D Agent::dirToPos(const int dir, Point2D const& pos) {
   switch (dir % 6) {
     case 0:
       return World::NE(pos);
@@ -52,4 +50,11 @@ Point2D Agent::dirToPos(const int dir, Point2D const& pos)  {
     default:
       throw "random out of range";
   }
+}
+std::vector<Point2D> Agent::neighbors(const Point2D& p) {
+  std::vector<Point2D> result;
+  for(int i = 0; i < 6; i++) {
+    result.push_back(dirToPos(i, p));
+  }
+  return result;
 }

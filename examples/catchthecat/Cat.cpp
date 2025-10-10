@@ -1,18 +1,10 @@
 #include "Cat.h"
 #include "World.h"
 
-#include <queue>
-#include <stdexcept>
-#include <unordered_map>
 
 
-static std::vector<Point2D> neighbors(const Point2D& p) {
-  std::vector<Point2D> result;
-  for(int i = 0; i < 6; i++) {
-    result.push_back(Agent::dirToPos(i, p));
-  }
-  return result;
-}
+
+
 
 struct Node {
   Point2D point;
@@ -23,11 +15,6 @@ struct Node {
   }
 };
 
-//found at:
-//https://www.redblobgames.com/grids/hexagons/#distances-cube
-float heuristic(const Point2D& a, const Point2D& b) {
-  return (std::abs(a.x - b.x) + std::abs(a.x + a.y - b.x - b.y) + std::abs(a.y - b.y)) / 2.0;
-}
 
 static bool isOnEdge(const Point2D&p, const int side) {
   return p.x == -side || p.x == side || p.y == -side || p.y == side;
@@ -54,14 +41,14 @@ std::vector<Point2D> AStar(World* world, const Point2D& start) {
       break;
     }
 
-    for(auto& next : neighbors(current)) {
+    for(auto& next : Agent::neighbors(current)) {
 
       if(world->getContent(next)) continue; // skip if its a wall
 
       const float newCost = costSoFar[current] + 1;
       if (!costSoFar.contains(next) || newCost < costSoFar[next]) {
         costSoFar[next] = newCost;
-        const float priority = newCost + heuristic(goal, next);
+        const float priority = newCost + Agent::heuristic(goal, next);
         frontier.push({next, priority});
         cameFrom[next] = current;
       }
