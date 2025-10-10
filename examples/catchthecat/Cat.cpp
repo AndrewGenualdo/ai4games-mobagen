@@ -13,6 +13,7 @@ static std::vector<Point2D> neighbors(const Point2D& p) {
   }
   return result;
 }
+
 struct Node {
   Point2D point;
   double priority;
@@ -43,7 +44,6 @@ std::vector<Point2D> AStar(World* world, const Point2D& start) {
   costSoFar[start] = 0.0f;
 
   Point2D goal = Point2D::INFINITE;
-  bool foundEdge = false;
 
   while(!frontier.empty()) {
     Point2D current = frontier.top().point;
@@ -51,7 +51,6 @@ std::vector<Point2D> AStar(World* world, const Point2D& start) {
 
     if(isOnEdge(current, world->getWorldSideSize() / 2)) {
       goal = current;
-      foundEdge = true;
       break;
     }
 
@@ -70,7 +69,7 @@ std::vector<Point2D> AStar(World* world, const Point2D& start) {
   }
 
   std::vector<Point2D> path;
-  if(foundEdge) {
+  if(goal != Point2D::INFINITE) {
     for(Point2D current = goal; current != Point2D::INFINITE && current != start; current = cameFrom.at(current)) {
       path.push_back(current);
     }
@@ -90,7 +89,7 @@ Point2D Cat::Move(World* world) {
     if (!world->catCanMoveToPosition(p)) {
       for (int i = 0; i < 5; i++) {
         rand = (rand + 1) % 6;
-        p = Agent::dirToPos(rand, cat);
+        p = dirToPos(rand, cat);
         if (world->catCanMoveToPosition(p)) break;
         if (i == 4) return cat;
       }
