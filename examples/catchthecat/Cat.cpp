@@ -82,7 +82,7 @@ Point2D Cat::Move(World* world) {
 
   std::vector<Point2D> path = AStar(world, cat);
 
-  if(path.empty() || true) { //random walk if it can't move
+  if(path.empty()) { //random walk if it can't move
     int rand = Random::Range(0, 5);
     Point2D p = dirToPos(rand, cat);
 
