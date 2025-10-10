@@ -42,15 +42,17 @@ Point2D Catcher::Move(World* world) {
     check(cat.x + 1, side);
   }
 
+  check(-side + 1, -side);
+  check(side - 1, -side);
+  check(-side + 1, side);
+  check(side - 1, side);
+
   std::vector<Point2D> walls;
   for(int y = -side; y <= side; y += 2) walls.push_back(Point2D(-side, y));
   for(int y = -side; y <= side; y += 2) walls.push_back(Point2D(side, y));
   for(int x = -side + 2; x <= side - 2; x += 2) walls.push_back(Point2D(x, -side));
   for(int x = -side + 2; x <= side - 2; x += 2) walls.push_back(Point2D(x, side));
-  walls.push_back(Point2D(-side + 1, -side));
-  walls.push_back(Point2D(side - 1, -side));
-  walls.push_back(Point2D(-side + 1, side));
-  walls.push_back(Point2D(side - 1, side));
+
 
 
   sortByDistance(walls, cat);
