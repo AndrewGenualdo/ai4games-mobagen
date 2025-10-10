@@ -12,6 +12,8 @@ public:
   virtual Point2D Move(World*) = 0;
 
   std::vector<Point2D> generatePath(World* w);
+
+  static Point2D dirToPos(int dir, Point2D const &pos);
 };
 
 #endif  // AGENT_H

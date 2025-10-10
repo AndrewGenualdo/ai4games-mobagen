@@ -1,36 +1,85 @@
 #include "Catcher.h"
 #include "World.h"
 
+#include <algorithm>
+
+//found at:
+//https://www.redblobgames.com/grids/hexagons/#distances-cube
+float hexDistance(const Point2D& a, const Point2D& b) {
+  return (std::abs(a.x - b.x) + std::abs(a.x + a.y - b.x - b.y) + std::abs(a.y - b.y)) / 2.0;
+}
+
+void sortByDistance(std::vector<Point2D>& points, const Point2D& cat) {
+  std::sort(points.begin(), points.end(),
+      [&cat](const Point2D& a, const Point2D& b) {
+          return hexDistance(a, cat) < hexDistance(b, cat);
+      });
+}
+
 Point2D Catcher::Move(World* world) {
   auto side = world->getWorldSideSize() / 2;
-  /*for (;;) {
-    Point2D p = {Random::Range(-side, side), Random::Range(-side, side)};
-    auto cat = world->getCat();
-    if (cat.x != p.x && cat.y != p.y && !world->getContent(p)) return p;
-  }*/
-  int dir = 0;
-  constexpr int SOUTH = 0;
-  constexpr int EAST = 1;
-  constexpr int NORTH = 2;
-  constexpr int WEST = 3;
-  int southOff = 0;
-  int eastOff = 0;
-  int northOff = 0;
-  int westOff = 0;
-  Point2D dims = Point2D(world->getWorldSideSize(), world->getWorldSideSize());
-  Point2D p = Point2D(-side, -side);
-  Point2D cat = world->getCat() + Point2D(side, side);
-  Point2D catReal = world->getCat();
-  #define filled(p) world->getContent(p) || p == cat
-  #define valid(p) p.x >= -side && p.x <= side && p.y >= -side && p.y <= side
-  /*if (filled(p)) {
-    p = Point2D(side, -side);
+  Point2D cat = world->getCat();
+#define valid(p) p.x >= -side && p.x <= side && p.y >= -side && p.y <= side
+#define filled(p) world->getContent(p) || p == cat
+#define check(x, y) if (valid(Point2D(x, y)) && !filled(Point2D(x, y))) return Point2D(x, y)
+
+  if (cat.x <= -side + 1) {
+    check(-side, cat.y);
+    check(-side, cat.y + 1);
+    check(-side, cat.y - 1);
   }
-  if (filled(p))*/
-  if (!filled(Point2D(-side, -side))) return Point2D(-side, -side);
-  if (!filled(Point2D(side, -side))) return Point2D(side, -side);
-  if (!filled(Point2D(side, side))) return Point2D(side, side);
-  if (!filled(Point2D(-side, side))) return Point2D(-side, side);
+  if (cat.x >= side - 1) {
+    check(side, cat.y);
+    check(side, cat.y + 1);
+    check(side, cat.y - 1);
+  }
+  if (cat.y <= -side + 1) {
+    check(cat.x, -side);
+    check(cat.x + 1, -side);
+  }
+  if (cat.y >= side - 1) {
+    check(cat.x, side);
+    check(cat.x + 1, side);
+  }
+
+  std::vector<Point2D> walls;
+  for(int y = -side; y <= side; y += 2) walls.push_back(Point2D(-side, y));
+  for(int y = -side; y <= side; y += 2) walls.push_back(Point2D(side, y));
+  for(int x = -side + 2; x <= side - 2; x += 2) walls.push_back(Point2D(x, -side));
+  for(int x = -side + 2; x <= side - 2; x += 2) walls.push_back(Point2D(x, side));
+  walls.push_back(Point2D(-side + 1, -side));
+  walls.push_back(Point2D(side - 1, -side));
+  walls.push_back(Point2D(-side + 1, side));
+  walls.push_back(Point2D(side - 1, side));
+
+
+  sortByDistance(walls, cat);
+
+  for(int i = 0; i < walls.size(); i++) {
+    check(walls[i].x, walls[i].y);
+  }
+
+  int rand = Random::Range(0, 5);
+  for(int i = 0; i < 6; i++) {
+    check(dirToPos(i + rand, cat).x, dirToPos(i + rand, cat).y);
+  }
+  return cat;
+  /*for(int y = -side; y <= side; y+= 2) check(-side, y);
+  for(int y = -side; y <= side; y+= 2) check(side, y);
+  for(int x = -side; x <= )*/
+  /*Point2D dims = Point2D(world->getWorldSideSize(), world->getWorldSideSize());
+  Point2D p = Point2D(-side, -side);
+
+  Point2D catReal = world->getCat();
+
+
+
+
+  check(-side, side);
+  check(side, -side);
+  check(side, side);
+  check(-side, side);
+  check(side, -side + 1);
 
 
 
@@ -68,8 +117,8 @@ Point2D Catcher::Move(World* world) {
     p.x = side;
     p.y = catReal.y;
     if (catReal.x >= side - 1 && !filled(p)) return p;
-    p.y = catReal.y - 1;
-    bool top = true;
+    p.y = catReal.y + 1;
+    bool top = false;
     bool fill = false;
     while (filled(p) && valid(p)) {
       if (top) p.y += 2;
@@ -149,72 +198,6 @@ Point2D Catcher::Move(World* world) {
       }
     }
     return p;
-    //if (!valid(p)) p.y = -side;
   }
-  //std::cout << ": " << p.x << " " << p.y << std::endl;
-  /*int dir = 0;
-  constexpr int SOUTH = 0;
-  int southOff = 0;
-  constexpr int EAST = 1;
-  int eastOff = 0;
-  constexpr int NORTH = 2;
-  int northOff = 0;
-  constexpr int WEST = 3;
-  int westOff = 0;
-  while (world->getContent(p) || world->getCat() == p) {
-    switch (dir) {
-      case SOUTH: {
-        //southOff == 0 ? p.y += 2 : p.y++;
-        p.y += 2;
-        if (p.y >= side - southOff) {
-          dir = (dir + 1) % 4;
-          p.x++;
-          if (world->getContent(p)) {
-            //p.y--;
-            southOff++;
-          }
-        }
-        break;
-      }
-      case EAST: {
-        //eastOff == 0 ? p.x += 2 : p.x++;
-        p.x += 2;
-        if (p.x >= side - eastOff) {
-          dir = (dir + 1) % 4;
-          p.x-=2;
-        if (world->getContent(p)) {
-
-          eastOff++;
-        }
-        }
-        break;
-      }
-      case NORTH: {
-        //northOff == 0 ? p.y -= 2 : p.y--;
-        p.y -= 2;
-        if (p.y <= -side + northOff + 1) {
-          dir = (dir + 1) % 4;
-          if (world->getContent(p)) {
-            //p.y++;
-            northOff++;
-          }
-        }
-        break;
-      }
-      case WEST: {
-        //westOff == 0 ? p.x -= 2 : p.x--;
-        p.x -= 2;
-        if (p.x <= -side + westOff + 1) {
-          dir = (dir + 1) % 4;
-          p.y++;
-          if (world->getContent(p)) {
-            p.x++;
-            westOff++;
-          }
-        }
-        break;
-      }
-    }
-  }*/
-  return p;
+  return p;*/
 }
