@@ -23,21 +23,21 @@ Point2D Catcher::Move(World* world) {
 #define filled(p) world->getContent(p) || p == cat
 #define check(x, y) if (valid(Point2D(x, y)) && !filled(Point2D(x, y))) return Point2D(x, y)
 
-  if (cat.x <= -side + 1) {
+  if (cat.x <= -side + 1) { //left
     check(-side, cat.y);
-    check(-side, cat.y + 1);
-    check(-side, cat.y - 1);
+    if(cat.y != side - 1) check(-side, cat.y + 1);
+    if(cat.y != -side + 1) check(-side, cat.y - 1);
   }
-  if (cat.x >= side - 1) {
+  if (cat.x >= side - 1) { //right
     check(side, cat.y);
     check(side, cat.y + 1);
     check(side, cat.y - 1);
   }
-  if (cat.y <= -side + 1) {
+  if (cat.y <= -side + 1) { //top
     check(cat.x, -side);
     check(cat.x + 1, -side);
   }
-  if (cat.y >= side - 1) {
+  if (cat.y >= side - 1) { //bottom
     check(cat.x, side);
     check(cat.x + 1, side);
   }
